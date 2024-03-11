@@ -1,43 +1,7 @@
-import getUserData from '@/actions/getUserData';
 import { Button } from '@/components/ui/button';
-import supabase from '@/providers/supabaseServerClient';
-import { revalidatePath } from 'next/cache';
 
 const Profile = async () => {
-  const userData = await getUserData();
-  const { data, error } = await supabase.auth.getSession();
-  
-  console.log(data);
-
-  const {
-    data: { publicUrl: userLogo },
-  } = supabase.storage.from('images').getPublicUrl(userData?.logo!);
-
-  const handleAddSkill = async (formData: FormData) => {
-    'use server';
-
-    const skill = formData.get('skill');
-
-    if (!skill) return;
-
-    // Update the user record
-    const { data: formResponse, error: formError } = await supabase.rpc(
-      'add_skill',
-      {
-        user_id: userData?.id!,
-        new_skill: skill as string,
-      }
-    );
-
-    if (formError) {
-      console.log(formError);
-      return;
-    }
-
-    console.log(formResponse);
-
-    revalidatePath('/profile');
-  };
+  const handleAddSkill = async (formData: FormData) => {};
 
   return (
     <div className='bg-gray-100 min-h-screen'>
@@ -47,12 +11,12 @@ const Profile = async () => {
             <div className='bg-white shadow rounded-lg p-6'>
               <div className='flex flex-col items-center'>
                 <img
-                  src={userLogo}
+                  src={''}
                   className='w-32 h-32 bg-gray-300 object-cover rounded-full mb-4 shrink-0'
-                  alt={userData?.full_name}
+                  alt={''}
                 />
-                <h1 className='text-xl font-bold'>{userData?.full_name}</h1>
-                <p className='text-gray-700'>{userData?.job_title}</p>
+                <h1 className='text-xl font-bold'>{''}</h1>
+                <p className='text-gray-700'>{''}</p>
                 <div className='mt-6 flex flex-wrap gap-4 justify-center'>
                   <a
                     href='#'
