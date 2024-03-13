@@ -34,7 +34,7 @@ const Profile = async () => {
               </div>
               <hr className='my-6 border-t border-gray-300' />
               <div className='flex flex-col'>
-                <form action={handleAddSkill} className='flex'>
+                <form className='flex'>
                   <input
                     className='border mr-2 rounded-md border-black px-3 py-2'
                     type='text'
