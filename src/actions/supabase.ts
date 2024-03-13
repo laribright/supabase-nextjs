@@ -12,7 +12,7 @@ export async function registerWithEmailAndPasword({
   const response = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: 'http://localhost:3000',
+      emailRedirectTo: 'https://supabase-nextjs-j5opxp5h0-laribright.vercel.app/',
     },
   });
 
