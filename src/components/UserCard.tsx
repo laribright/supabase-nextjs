@@ -1,9 +1,15 @@
+'use client';
+
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 
 import { User } from '@/types/app';
+import AuthModalContext from '@/context/AuthModalContext';
+import { Button } from './ui/button';
 
 const UserCard: FC<{ userData: User | null }> = ({ userData }) => {
+  const { toggleAuthModal } = useContext(AuthModalContext);
+
   return (
     <div className='w-full py-3 px-10 max-w-sm bg-white border border-gray-200 rounded-lg shadow'>
       <div className='flex flex-col items-center pb-10'>
@@ -17,12 +23,18 @@ const UserCard: FC<{ userData: User | null }> = ({ userData }) => {
         </h5>
         <p>{userData?.email}</p>
         <div className='flex mt-4 md:mt-6'>
-          <Link
-            href='/profile'
-            className='inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-          >
-            Profile
-          </Link>
+          {!userData ? (
+            <Button variant='destructive' onClick={toggleAuthModal}>
+              AUTH
+            </Button>
+          ) : (
+            <Link
+              href='/profile'
+              className='inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
+            >
+              Profile
+            </Link>
+          )}
         </div>
       </div>
     </div>

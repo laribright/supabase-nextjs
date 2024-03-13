@@ -1,0 +1,38 @@
+create table
+  users (
+    id uuid references auth.users not null primary key,
+    email text unique not null,
+    full_name text,
+    avatar_url text
+  );
+
+alter table
+  users enable row level security;
+
+create policy
+  "Can view own user data." on users for
+select
+  using (auth.uid () = id);
+
+create policy
+  "Can upade own user data." on users for
+update
+  using (auth.uid () = id);
+
+create  
+or replace function public.handle_new_user () returns trigger as $$
+begin
+  if new.raw_user_meta_data->>'avatar_url' is null or new.raw_user_meta_data->>'avatar_url' = '' then
+    new.raw_user_meta_data = jsonb_set(new.raw_user_meta_data, '{avatar_url}', '"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww"' ::jsonb);
+  end if;
+
+  insert into public.users (id, email, full_name, avatar_url)
+  values (new.id, new.email, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row
+    execute procedure public.handle_new_user();

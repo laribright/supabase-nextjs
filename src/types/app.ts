@@ -5,4 +5,5 @@ export interface User {
   email: string;
   job_title: string;
   logo: string;
+  skills: string[];
 }
