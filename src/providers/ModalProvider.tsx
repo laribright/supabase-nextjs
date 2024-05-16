@@ -29,6 +29,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 
   if (!isMounted) return null;
 
+  // pass stata as value to provider
   return (
     <AuthModalContext.Provider
       value={{

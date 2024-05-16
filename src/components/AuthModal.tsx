@@ -23,6 +23,7 @@ import {
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from './ui/input';
+import { registerWithEmailAndPasword } from '@/actions/supabase';
 
 const AuthModal = () => {
   const { isAuthModalOpen, toggleAuthModal } = useContext(AuthModalContext);
@@ -45,9 +46,12 @@ const AuthModal = () => {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {}
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await registerWithEmailAndPasword(values)
 
-  async function githubAuth() {}
+  }
+
+  async function githubAuth() { }
 
   return (
     <Dialog open={isAuthModalOpen} onOpenChange={toggleAuthModal}>
