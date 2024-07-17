@@ -8,8 +8,8 @@ import ModalProvider from '@/providers/ModalProvider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Complete auth',
-  description: 'codewithlari',
+  title: 'Complete auth for supabase',
+  description: 'Understanding how to implement Supabase into Nextjs 14 (by codewithlari)',
 };
 
 export default function RootLayout({

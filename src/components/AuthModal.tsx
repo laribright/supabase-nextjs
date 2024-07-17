@@ -23,6 +23,9 @@ import {
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from './ui/input';
+import { registerWithEmailAndPasword } from '@/actions/supabase';
+import { Provider } from '@supabase/supabase-js';
+import { supabaseBrowserClient } from '@/utils/supabaseClient';
 
 const AuthModal = () => {
   const { isAuthModalOpen, toggleAuthModal } = useContext(AuthModalContext);
@@ -32,22 +35,34 @@ const AuthModal = () => {
       .string()
       .email()
       .min(5, { message: 'Job title must be at least 2 characters' }),
-    password: z
-      .string()
-      .min(3, { message: 'Password must at least be 3 characters' }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {}
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const response = await registerWithEmailAndPasword(values);
 
-  async function githubAuth() {}
+    const { error, data } = JSON.parse(response);
+
+    if (error) {
+      console.warn('Sign in error', error);
+      return;
+    }
+  }
+
+  async function socalAuth(provider: Provider) {
+    const response = await supabaseBrowserClient.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${location.origin}/auth/callback`
+      }
+    });
+  }
 
   return (
     <Dialog open={isAuthModalOpen} onOpenChange={toggleAuthModal}>
@@ -56,8 +71,8 @@ const AuthModal = () => {
           <DialogTitle>Authenticate</DialogTitle>
         </DialogHeader>
 
-        <Button>GOOGLE</Button>
-        <Button onClick={githubAuth}>GITHUB</Button>
+        {/* <Button>GOOGLE</Button> */}
+        <Button onClick={socalAuth.bind(this, "github")}>GITHUB</Button>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
@@ -71,21 +86,6 @@ const AuthModal = () => {
                     <Input placeholder='email' {...field} />
                   </FormControl>
                   <FormDescription>Please enter your email</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='password'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input placeholder='password' {...field} />
-                  </FormControl>
-                  <FormDescription>Min 3 characters</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
